@@ -125,6 +125,301 @@ paths:
                     example: Logout successfully
         '401':
           description: Unauthorized
+  /users/verify-email:
+    post:
+      tags:
+        - users
+      summary: Xác thực email
+      description: Xác thực email
+      operationId: verifyEmail
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Email verify token
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailVerifyToken'
+      responses:
+        '200':
+          description: Xác thực email thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Verify email successfully
+                  data:
+                    $ref: '#/components/schemas/SuccessAuthentication'
+        '201':
+          description: Email đã được xác thực(Vẫn là code 200 nhưng message khác)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User already verified
+        '401':
+          description: Unauthorized
+  /users/resend-verify-email:
+    post:
+      tags:
+        - users
+      summary: Gửi lại email xác thực
+      description: Gửi lại email xác thực
+      operationId: resendVerifyEmail
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Gửi lại email xác thực thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Resend verify email successfully
+        '401':
+          description: Unauthorized
+  /users/forgot-password:
+    post:
+      tags:
+        - users
+      summary: Quên mật khẩu
+      description: Quên mật khẩu
+      operationId: forgotPassword
+      requestBody:
+        description: Email
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: meoweird@gmail.com
+      responses:
+        '200':
+          description: Gửi email quên mật khẩu thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Check email to reset password
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /users/verify-forgot-password:
+    post:
+      tags:
+        - users
+      summary: Xác thực quên mật khẩu
+      description: Xác thực quên mật khẩu
+      operationId: verifyForgotPassword
+      requestBody:
+        description: Forgot password token
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordToken'
+      responses:
+        '200':
+          description: Xác thực quên mật khẩu thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Verify forgot password token successfully
+        '401':
+          description: Unauthorized
+  /users/reset-password:
+    post:
+      tags:
+        - users
+      summary: Đặt lại mật khẩu
+      description: Đặt lại mật khẩu
+      operationId: resetPassword
+      requestBody:
+        description: Mật khẩu mới
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                forgot_password_token:
+                  $ref: '#/components/schemas/ForgotPasswordToken'
+                password:
+                  type: string
+                  example: Dong2003!
+                confirm_password:
+                  type: string
+                  example: Dong2003!
+      responses:
+        '200':
+          description: Đặt lại mật khẩu thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Reset password successfully
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /users/"me":
+    patch:
+      tags:
+        - users
+      summary: Cập nhật thông tin user
+      description: Cập nhật thông tin user
+      operationId: updateMe
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Thông tin cập nhật
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Le Xuan Dong
+                date_of_birth:
+                  type: string
+                  format: ISO8601
+                  example: 2023-06-08T10:17:31.096Z
+                bio:
+                  type: string
+                  example: 'This is my bio.'
+                location:
+                  type: string
+                  example: 'San Francisco, CA'
+                website:
+                  type: string
+                  example: 'www.example.com'
+      responses:
+        '200':
+          description: Cập nhật thông tin user thành công
+          content:
+            application/json:
+              schema:
+                message:
+                  type: string
+                  example: Update me successfully
+                $ref: '#/components/schemas/User'
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /users/change-password:
+    post:
+      tags:
+        - users
+      summary: Đổi mật khẩu
+      description: Đổi mật khẩu
+      operationId: changePassword
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Mật khẩu mới
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                  example: Dong2003!
+                new_password:
+                  type: string
+                  example: Dong123!
+                confirm_password:
+                  type: string
+                  example: Dong123!
+      responses:
+        '200':
+          description: Đổi mật khẩu thành công
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Change password successfully
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /users/:username:
+    get:
+      tags:
+        - users
+      summary: Lấy thông tin user theo username
+      description: Lấy thông tin user theo username
+      operationId: getUserByUsername
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username của user
+          schema:
+            type: string
+      responses:
+        default:
+          description: Lấy thông tin user thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/refresh-token:
+    post:
+      tags:
+        - users
+      summary: Lấy lại access token
+      description: Lấy lại access token
+      operationId: refreshToken
+      requestBody:
+        description: Refresh token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjRiZTBhZDJlNDNkMjQ2NDM5NGZlZWRiIiwidG9rZW5fdHlwZSI6MSwidmVyaWZ5IjoxLCJpYXQiOjE2OTEzODMyMjYsImV4cCI6MTcwMDAyMzIyNn0.bFnaBfxWl-Q48HCwAeMpNzZwTO9LEjcBd7Zyipjqr64
+      responses:
+        '200':
+          description: Lấy lại access token thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Refresh token successfully
+                  result:
+                    $ref: '#/components/schemas/SuccessAuthentication'
+        '401':
+          description: Unauthorized
 components:
   schemas:
     RegisterBody:
@@ -219,6 +514,18 @@ components:
       type: number
       enum: [Unverified, Verified, Banned]
       example: 1
+    EmailVerifyToken:
+      type: object
+      properties:
+        email_verify_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU0MGRhYzUxNjlmYjcyZDA0NzIwNTZmIiwidG9rZW5fdHlwZSI6MywidmVyaWZ5IjowLCJpYXQiOjE2OTg3NDkxMjUsImV4cCI6MTY5ODc1MjcyNX0.SANd0C_3saBmzafLM74X6zHD0UsxG0yHrm31fnPGf3U
+    ForgotPasswordToken:
+      type: object
+      properties:
+        forgot_password_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU0MGRhYzUxNjlmYjcyZDA0NzIwNTZmIiwidG9rZW5fdHlwZSI6MywidmVyaWZ5IjowLCJpYXQiOjE2OTg3NDkxMjUsImV4cCI6MTY5ODc1MjcyNX0.SANd0C_3saBmzafLM74X6zHD0UsxG0yHrm31fnPGf3U
   securitySchemes:
     BearerAuth:
       type: http
