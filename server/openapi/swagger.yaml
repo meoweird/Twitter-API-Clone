@@ -329,7 +329,7 @@ paths:
         '401':
           description: Unauthorized
   /users/change-password:
-    post:
+    put:
       tags:
         - users
       summary: Đổi mật khẩu
@@ -418,6 +418,207 @@ paths:
                     example: Refresh token successfully
                   result:
                     $ref: '#/components/schemas/SuccessAuthentication'
+        '401':
+          description: Unauthorized
+  /users/follow:
+    post:
+      tags:
+        - users
+      summary: Follow user
+      description: Follow user
+      operationId: followUser
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: User id
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                followed_user_id:
+                  type: string
+                  example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Follow user successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Follow user successfully
+        '401':
+          description: Unauthorized
+  /users/follow/:user_id:
+    delete:
+      tags:
+        - users
+      summary: Unfollow user
+      description: Unfollow user
+      operationId: unfollowUser
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: User id
+          schema:
+            type: string
+            example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Unfollow user successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ['Unfollow user successfully', 'Not followed yet']
+        '401':
+          description: Unauthorized
+  /medias/upload-image:
+    post:
+      tags:
+        - medias
+      summary: Upload image
+      description: Upload image
+      operationId: uploadImage
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Image
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Upload image successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: https://twitter-bucket-2023.s3.ap-southeast-1.amazonaws.com/images/3bbfe0a2912998617ee4ba000.jpg
+                  type:
+                    $ref: '#/components/schemas/MediaType'
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /medias/upload-video:
+    post:
+      tags:
+        - medias
+      summary: Upload video
+      description: Upload video
+      operationId: uploadVideo
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Video
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                video:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Upload video successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: https://twitter-bucket-2023.s3.ap-southeast-1.amazonaws.com/videos/3bbfe0a2912998617ee4ba000.mp4
+                  type:
+                    $ref: '#/components/schemas/MediaType'
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /medias/upload-video-hls:
+    post:
+      tags:
+        - medias
+      summary: Upload video HLS
+      description: Upload video HLS
+      operationId: uploadVideoHLS
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Video HLS
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                video_hls:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Upload video HLS successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: https://twitter-bucket-2023.s3.ap-southeast-1.amazonaws.com/videos-hls/3bbfe0a2912998617ee4ba000.m3u8
+                  type:
+                    $ref: '#/components/schemas/MediaType'
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /medias/video-status/:id:
+    get:
+      tags:
+        - medias
+      summary: Lấy trạng thái video
+      description: Lấy trạng thái video
+      operationId: getVideoStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Video id
+          schema:
+            type: string
+            example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Lấy trạng thái video thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get video status successfully
+                  data:
+                    $ref: '#/components/schemas/VideoStatus'
+
         '401':
           description: Unauthorized
 components:
@@ -526,6 +727,26 @@ components:
         forgot_password_token:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU0MGRhYzUxNjlmYjcyZDA0NzIwNTZmIiwidG9rZW5fdHlwZSI6MywidmVyaWZ5IjowLCJpYXQiOjE2OTg3NDkxMjUsImV4cCI6MTY5ODc1MjcyNX0.SANd0C_3saBmzafLM74X6zHD0UsxG0yHrm31fnPGf3U
+    MediaType:
+      type: number
+      enum: [Image, Video, HLS]
+      example: 0
+    VideoStatus:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: MongoId
+          example: 64be0ad2e43d2464394feedb
+        name:
+          type: string
+          example: 'video.mp4'
+          status:
+          $ref: '#/components/schemas/EncodingStatus'
+    EncodingStatus:
+      type: number
+      enum: [Pending, Processing, Success, Failed]
+      example: 2
   securitySchemes:
     BearerAuth:
       type: http

@@ -347,7 +347,7 @@ class UserService {
         $currentDate: { updated_at: true }
       }
     )
-    return { message: USERS_MESSAGES.RESET_PASSWORD_SUCCESSFULLY }
+    return { message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESSFULLY }
   }
 
   async refreshToken({
