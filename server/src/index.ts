@@ -16,8 +16,33 @@ import { createServer } from 'http'
 import conversationRouter from './routes/conversation.routes'
 import initSocket from './utils/socket'
 // import '~/utils/fake'
+import YAML from 'yaml'
+import swaggerUi from 'swagger-ui-express'
+import swaggerJsdoc from 'swagger-jsdoc'
 
 initFolder()
+const options: swaggerJsdoc.Options = {
+  definition: {
+    openapi: '3.0.3',
+    info: {
+      title: 'Twitter API Clone Documentation',
+      version: '1.0.0',
+      description: 'This is a project about cloning Twitter',
+      termsOfService: 'http://swagger.io/terms/',
+      contact: {
+        email: 'meoweird.dev@gmail.com',
+        name: 'meoweird',
+        url: 'github.com/meoweird'
+      },
+      license: {
+        name: 'Apache 2.0',
+        url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+      }
+    }
+  },
+  apis: ['./openapi/*.yaml']
+}
+const openapiSpecification = swaggerJsdoc(options)
 
 const PORT = process.env.PORT || 3000
 const app = express()
@@ -30,7 +55,7 @@ databaseService.connect().then(() => {
   databaseService.indexFollowers()
   databaseService.indexTweets()
 })
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use(express.json())
 app.use(cors())
 app.use('/users', userRouter)

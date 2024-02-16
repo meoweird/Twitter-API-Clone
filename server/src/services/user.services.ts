@@ -359,16 +359,21 @@ class UserService {
     user_id: string
     refresh_token: string
     verify: UserVerifyStatus
-    exp?: number
+    exp: number
   }) {
     const [new_access_token, new_refresh_token] = await Promise.all([
       this.signAccessToken({ user_id, verify }),
       this.signRefreshToken({ user_id, verify, exp }),
       databaseService.refreshTokens.deleteOne({ token: refresh_token })
     ])
-    const { iat, exp: new_exp } = await this.decodeRefreshToken(new_refresh_token as string)
+    const decoded_refresh_token = await this.decodeRefreshToken(new_refresh_token as string)
     await databaseService.refreshTokens.insertOne(
-      new RefreshToken({ user_id: new ObjectId(user_id), token: new_refresh_token as string, iat, exp: new_exp })
+      new RefreshToken({
+        user_id: new ObjectId(user_id),
+        token: new_refresh_token as string,
+        iat: decoded_refresh_token.iat,
+        exp: decoded_refresh_token.exp
+      })
     )
     return {
       access_token: new_access_token,
