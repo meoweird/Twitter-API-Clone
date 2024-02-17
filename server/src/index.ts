@@ -38,7 +38,12 @@ const options: swaggerJsdoc.Options = {
         name: 'Apache 2.0',
         url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
       }
-    }
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000'
+      }
+    ]
   },
   apis: ['./openapi/*.yaml']
 }

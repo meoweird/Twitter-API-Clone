@@ -621,6 +621,311 @@ paths:
 
         '401':
           description: Unauthorized
+  /likes/:
+    post:
+      tags:
+        - likes
+      summary: Like tweet
+      description: Like tweet
+      operationId: likeTweet
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Tweet id
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tweet_id:
+                  type: string
+                  example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Like tweet successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Like tweet successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Tweet not found
+  /likes/:tweet_id:
+    delete:
+      tags:
+        - likes
+      summary: Unlike tweet
+      description: Unlike tweet
+      operationId: unlikeTweet
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tweet_id
+          in: path
+          required: true
+          description: Tweet id
+          schema:
+            type: string
+            example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Unlike tweet successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unlike tweet successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Tweet not found
+  /bookmarks/:
+    post:
+      tags:
+        - bookmarks
+      summary: Bookmark tweet
+      description: Bookmark tweet
+      operationId: bookmarkTweet
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Tweet id
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tweet_id:
+                  type: string
+                  example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Bookmark tweet successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Bookmark tweet successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Tweet not found
+  /bookmarks/:tweet_id:
+    delete:
+      tags:
+        - bookmarks
+      summary: Unbookmark tweet
+      description: Unbookmark tweet
+      operationId: unbookmarkTweet
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tweet_id
+          in: path
+          required: true
+          description: Tweet id
+          schema:
+            type: string
+            example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Unbookmark tweet successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unbookmark tweet successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Tweet not found
+  /tweets/:
+    post:
+      tags:
+        - tweets
+      summary: Tạo tweet
+      description: Tạo tweet
+      operationId: createTweet
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Nội dung Tweet
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tweet'
+      responses:
+        '200':
+          description: Tạo tweet thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Create tweet successfully
+                  data:
+                    $ref: '#/components/schemas/Tweet'
+        '422':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+  /tweets/:id:
+    get:
+      tags:
+        - tweets
+      summary: Lấy tweet theo id
+      description: Lấy tweet theo id
+      operationId: getTweetById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Tweet id
+          schema:
+            type: string
+            example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Lấy tweet thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tweet'
+        '404':
+          description: Tweet not found
+  /tweets/:tweet_id/children:
+    get:
+      tags:
+        - tweets
+      summary: Lấy tweet con
+      description: Lấy tweet con
+      operationId: getTweetChildren
+      parameters:
+        - name: tweet_id
+          in: path
+          required: true
+          description: Tweet id
+          schema:
+            type: string
+            example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Lấy tweet con thành công
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tweet'
+        '404':
+          description: Tweet not found
+  /tweets/nothing?limit=10&page=1:
+    get:
+      tags:
+        - tweets
+      summary: Get newfeeds
+      description: Get newfeeds
+      operationId: getNewfeeds
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Số lượng tweet trên 1 trang
+          schema:
+            type: integer
+            example: 10
+        - name: page
+          in: query
+          required: false
+          description: Trang
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Lấy newfeeds thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get newfeeds successfully
+                  data:
+                    type: object
+                    properties:
+                      tweets:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Tweet'
+                      total_page:
+                        type: integer
+                        example: 10
+                      limit:
+                        type: integer
+                        example: 10
+                      page:
+                        type: integer
+                        example: 1
+  /conversations/receiver/:receiver_id?limit=10&page=1:
+    get:
+      tags:
+        - conversations
+      summary: Lấy conversation theo receiver
+      description: Lấy conversation theo receiver
+      operationId: getConversationByReceiver
+      parameters:
+        - name: receiver_id
+          in: path
+          required: true
+          description: Receiver id
+          schema:
+            type: string
+            example: 6512bbe3e2a072df563b5de3
+      responses:
+        '200':
+          description: Lấy conversation thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Get conversation successfully
+                  data:
+                    type: object
+                    properties:
+                      conversations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Conversation'
+                      total_page:
+                        type: integer
+                        example: 10
+                      limit:
+                        type: integer
+                        example: 10
+                      page:
+                        type: integer
+                        example: 1
 components:
   schemas:
     RegisterBody:
@@ -747,6 +1052,74 @@ components:
       type: number
       enum: [Pending, Processing, Success, Failed]
       example: 2
+    Tweet:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: MongoId
+          example: 64be0ad2e43d2464394feedb
+        type:
+          $ref: '#/components/schemas/TweetType'
+        audience:
+          $ref: '#/components/schemas/TweetAudience'
+        content:
+          type: string
+          example: 'This is my tweet'
+        parent_id:
+          type: string
+          format: MongoId
+          example: null
+        medias:
+          type: array
+          items:
+            type: string
+            format: MongoId
+          example: ['64be0ad2e43d2464394feedb', '64be0ad2e43d2464394feedc']
+        hastags:
+          type: array
+          items:
+            type: string
+          example: ['64be0ad2e43d2464394feedb', '64be0ad2e43d2464394feedc']
+        mentions:
+          type: array
+          items:
+            type: string
+          example: ['64be0ad2e43d2464394feedb', '64be0ad2e43d2464394feedc']
+    TweetType:
+      type: number
+      enum: [Tweet, Retweet, Comment, QuoteTweet]
+      example: 0
+    TweetAudience:
+      type: number
+      enum: [Everyone, TweetCircle]
+      example: 0
+    Conversation:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: MongoId
+          example: 64be0ad2e43d2464394feedb
+        sender_id:
+          type: string
+          format: MongoId
+          example: 64be0ad2e43d2464394feedb
+        receiver_id:
+          type: string
+          format: MongoId
+          example: 64be0ad2e43d2464394feedb
+        content:
+          type: string
+          example: 'This is my conversation'
+        created_at:
+          type: string
+          format: ISO8601
+          example: 2023-03-08T12:00:00Z
+        updated_at:
+          type: string
+          format: ISO8601
+          example: 2023-03-08T12:00:00Z
   securitySchemes:
     BearerAuth:
       type: http
