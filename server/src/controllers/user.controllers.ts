@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
+import { envConfig } from '~/constants/config'
 import { UserVerifyStatus } from '~/constants/enum'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
@@ -39,7 +40,7 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
 export const oauthController = async (req: Request<ParamsDictionary, any, any>, res: Response) => {
   const { code } = req.query
   const data = await userService.oauth(code as string)
-  const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK}?access_token=${data.access_token}&refresh_token=${data.refresh_token}&new_user=${data.newUser}&verify=${data.verify}`
+  const urlRedirect = `${envConfig.clientRedirectCallback}?access_token=${data.access_token}&refresh_token=${data.refresh_token}&new_user=${data.newUser}&verify=${data.verify}`
   return res.redirect(urlRedirect)
 }
 

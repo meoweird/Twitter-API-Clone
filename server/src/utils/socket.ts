@@ -9,11 +9,12 @@ import Conversation from '~/models/schemas/Conversation.schema'
 import databaseService from '~/services/database.services'
 import { verifyAccessToken } from './common'
 import { Server as ServerHttp } from 'http'
+import { envConfig } from '~/constants/config'
 
 const initSocket = (httpServer: ServerHttp) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL
+      origin: envConfig.clientUrl
     }
   })
   io.use(async (socket, next) => {

@@ -6,7 +6,6 @@ import sharp from 'sharp'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import { getFiles, getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/file'
 import { isProduction } from '~/constants/config'
-import { config } from 'dotenv'
 import { Media } from '~/models/Other'
 import { EncodingStatus, MediaType } from '~/constants/enum'
 import databaseService from './database.services'
@@ -15,7 +14,7 @@ import { encodeHLSWithMultipleVideoStreams } from '~/utils/videoV2'
 import { uploadFileToS3 } from '~/utils/s3'
 import mime from 'mime'
 import { rimrafSync } from 'rimraf'
-config()
+import { envConfig } from '~/constants/config'
 
 class Queue {
   items: string[]
@@ -136,8 +135,8 @@ class MediaService {
         }
         // return {
         //   url: isProduction
-        //     ? `${process.env.HOST}/static/image/${newName}.jpg`
-        //     : `http://localhost:${process.env.PORT}/static/image/${newName}.jpg`,
+        //     ? `${envConfig.host}/static/image/${newName}.jpg`
+        //     : `http://localhost:${envConfig.port}/static/image/${newName}.jpg`,
         //   type: MediaType.Image
         // }
       })
@@ -160,8 +159,8 @@ class MediaService {
         }
         // return {
         //   url: isProduction
-        //     ? `${process.env.HOST}/static/video/${file.newFilename}`
-        //     : `http://localhost:${process.env.PORT}/static/video/${file.newFilename}`,
+        //     ? `${envConfig.host}/static/video/${file.newFilename}`
+        //     : `http://localhost:${envConfig.port}/static/video/${file.newFilename}`,
         //   type: MediaType.Video
         // }
       })
@@ -177,8 +176,8 @@ class MediaService {
         encodeVideoQueue.enqueue(file.filepath)
         return {
           url: isProduction
-            ? `${process.env.HOST}/static/video-hls/${newName}/master.m3u8`
-            : `http://localhost:${process.env.PORT}/static/video-hls/${newName}/master.m3u8`,
+            ? `${envConfig.host}/static/video-hls/${newName}/master.m3u8`
+            : `http://localhost:${envConfig.port}/static/video-hls/${newName}/master.m3u8`,
           type: MediaType.HLS
         }
       })

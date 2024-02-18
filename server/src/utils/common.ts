@@ -5,6 +5,7 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import { verifyToken } from './jwt'
+import { envConfig } from '~/constants/config'
 
 export const numberEnumToArray = (numberEnum: { [key: string]: number | string }) => {
   return Object.values(numberEnum).filter((value) => typeof value === 'number') as number[]
@@ -20,7 +21,7 @@ export const verifyAccessToken = async (access_token: string, req?: Request) => 
   try {
     const decoded_authorization = await verifyToken({
       token: access_token,
-      secret: process.env.JWT_ACCESS_TOKEN_SECRET as string
+      secret: envConfig.jwtAccessTokenSecret
     })
     if (req) {
       ;(req as Request).decoded_authorization = decoded_authorization

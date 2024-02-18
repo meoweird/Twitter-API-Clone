@@ -19,6 +19,7 @@ import initSocket from './utils/socket'
 import YAML from 'yaml'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
+import { envConfig } from './constants/config'
 
 initFolder()
 const options: swaggerJsdoc.Options = {
@@ -49,7 +50,7 @@ const options: swaggerJsdoc.Options = {
 }
 const openapiSpecification = swaggerJsdoc(options)
 
-const PORT = process.env.PORT || 3000
+const PORT = envConfig.port || 3000
 const app = express()
 const httpServer = createServer(app)
 
