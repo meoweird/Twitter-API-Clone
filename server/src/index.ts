@@ -6,7 +6,7 @@ import mediaRouter from './routes/media.routes'
 import { initFolder } from './utils/file'
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import tweetRouter from './routes/tweet.routes'
 import bookmarkRouter from './routes/bookmark.routes'
 import likeRouter from './routes/like.routes'
@@ -19,7 +19,8 @@ import initSocket from './utils/socket'
 import YAML from 'yaml'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
-import { envConfig } from './constants/config'
+import { envConfig, isProduction } from './constants/config'
+import helmet from 'helmet'
 
 initFolder()
 const options: swaggerJsdoc.Options = {
@@ -53,7 +54,11 @@ const openapiSpecification = swaggerJsdoc(options)
 const PORT = envConfig.port || 3000
 const app = express()
 const httpServer = createServer(app)
-
+app.use(helmet())
+const corsOptions: CorsOptions = {
+  origin: isProduction ? envConfig.clientUrl : '*'
+}
+app.use(cors(corsOptions))
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshTokens()
